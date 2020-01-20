@@ -35,6 +35,7 @@
         var duration_feedback=1000;
         /* ========= /PARAMETERS ==================== */
 
+        var expid="pavgonogo_online";
         var subject = jsPsych.randomization.randomID(12);
         var datetime=Date().toLocaleString();
         // record the condition assignment in the jsPsych data
@@ -181,8 +182,8 @@
                 }
                 data.reward=reward;
                 //data.pressed_key = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
-                //data.correct = data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode(data.correct_response);
-                //saveData(subject, jsPsych.data.get().csv());
+                //data.correct = data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode(data.correct_response);      
+                saveData(expid+"_"+subject, jsPsych.data.get().csv());
             }
         }
 
@@ -262,7 +263,7 @@
                     jsPsych.resumeExperiment();
                 }
                 iadata=jsPsych.data.getInteractionData()
-                saveData(subject+"_interactiondata", iadata.csv());
+                saveData(expid+"_"+subject+"_interactiondata", iadata.csv());
             }
         });
 
