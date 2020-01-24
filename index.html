@@ -24,9 +24,9 @@
         var timeline = [];
 
         /* ========= PARAMETERS ==================== */
-        var ntrials = 1; // testing
-        var gocost=-1; // go-cost (added to reward in case of go)
-        var pwin_if_correct=0.7; // win-contingency
+        var ntrials = 40; // testing
+        var gocost=0; // go-cost (added to reward in case of go)
+        var pwin_if_correct=0.8; // win-contingency
         var rew_magnitude=10; // reward magnitude (multiplied by -1 for losses)
 
         var duration_fixation=1000;
@@ -57,47 +57,55 @@
             timeline.push({
                 type: "fullscreen",
                 fullscreen_mode: true,
-                message: "Velkommen! <p>Vi skal nå bruke hele skjermen din slik at du ikke blir distrahert av andre ting.<p>",
+                message: "Welcome! <p>We will now use your entire screen so that you are not distracted by other things.<p>",
                 button_label: "Fortsett"
             });
         }
         var instructions1 = {
             type: "instructions",
             pages: [
-                "<div class='instructions'><H1>Velkommen til dette eksperimentet!</H1><p>\
-                    Vennligst sitt komfortabelt ca. 60 cm fra skjermen. <p>\
-                    Mens du gjennomfører eksperimentet er det ikke lov å bytte vindu eller gjøre andre ting på PCen din. Hvis du allikevel bytter vindu under eksperimentet, vil eksperimentet sluttes automatisk og du vil bli bedt å starte på nytt.\
-                    Trykk på høyrepil på tastaturen eller klikk på 'neste' for å fortsette.</div>",
-                "<div class='instructions'><img src='pics/ticket1.png' width='500px'></img> <p> \
-                    Du skal bruke fire taster gjennom dette eksperimentet.<p>\
-                    Disse tastene er 'd','f','j' og 'k'. <p>\
-                    Vennligst plasser din venstre langfinger på 'd' og venstre pekefinger på 'f'. <p>\
-                    På samme måte, plasser din høyre pekefinger på 'j' og høyre langfinger på 'k'.<p> \
-                    Måten du plasserer hendene dine på, er vist på bilde øverst.<p>\
-                    Trykk på høyrepil på tastaturen eller klikk på 'neste' for å fortsette.</div>",
-                "<div class='instructions'>\
-                    Hver av de fire tastene hører til en spesifikk farge:<p>\
-                    <ul>\
-                    <li> d = <font color='red'>RØD</font></li>\
-                    <li> f = <font color='green'>GRØNN</font></li>\
-                    <li> j = <font color='blue'>BLÅ</font></li>\
-                    <li> k = <font color='yellow'>GUL</font></li>\
-                    </ul>\
-                    For å teste tastene, kan du prøve de nå...</div>"
+                "<div class='instructions'><H1>Welcome to the experiment!</H1><p>\
+                    Please sit comfortably ca 60cm from the screen.<p>\
+                    While conducting the experiment, you are not allowed to switch windows or do other things on your PC. If you switch windows during the experiment, the experiment will end automatically and you will be prompted to restart.<p>\
+                    Press next to continue.</div>",
+                "<div class='instructions'><p> \
+                    You will play a card game consisting of 160 trials. <p>\
+                    On each trial, you will be presented with one of four cards. You can choose to pick it up by pressing space or not do anything while you see the question mark. (Your response will only get registered during the question mark.) <p>\
+                    The combination of a specific card and your action/inaction will earn you points at the end of each trial. <p>\
+                    Two of the cards are 'winning cards' which means, the optimal outcome is winning 10 points and the alternative is not getting anything. The remaining two cards are 'losing cards' for which the optimal outcome is not losing anything (0 points) and the alternative is losing 10 points. <p>\
+                    You should learn which response is correct for each card to maximize your earnings in following trials. <p>\
+                    The task is made more difficult by probabilistic outcomes.<p>\
+                    That means that responding correctly will not guarantee you the optimal outcome. Rather, it will increase the probability of you receiving it. Respectively, the wrong response will decrease the probability of the optimal outcome. <p>\
+                    There will therefore be some confusing trials but the outcomes are not completely random so you should be able to learn after a number of trials.<p>\
+                    The task is rather difficult but it is important that you do not give up. Try to find the best strategy to collect as many points as possible! <p>\
+                    Good luck! <p>\
+                    Press next to start the prectise session.</div>"
+
             ],
             show_clickable_nav: true,
-            button_label_previous: "tilbake",
-            button_label_next: "neste"
+            button_label_previous: "back",
+            button_label_next: "next"
+        };
+        var instructions2 = {
+            type: "instructions",
+            pages: [
+                "<div class='instructions'><H1>Good luck!</H1><p>\
+                    Now the actual experiment will start. <p>\
+                    Press next to start the experiment.</div>"
+            ],
+            show_clickable_nav: true,
+            button_label_previous: "back",
+            button_label_next: "next"
         };
         timeline.push(instructions1);
 
         var conditions = ["gowin", "nogowin", "goavoid", "nogoavoid"];
-        var ticket_imgs= ["pics/ticket1.png", "pics/ticket2.png", "pics/ticket3.png", "pics/ticket4.png"];
+        var ticket_imgs= ["pics_cards/1.png", "pics_cards/2.png", "pics_cards/3.png", "pics_cards/4.png"];
         var condition_to_ticket = {
-            "gowin": "pics/ticket1.png",
-            "nogowin": "pics/ticket2.png",
-            "goavoid": "pics/ticket3.png",
-            "nogoavoid": "pics/ticket4.png"
+            "gowin": "pics_cards/1.png",
+            "nogowin": "pics_cards/2.png",
+            "goavoid": "pics_cards/3.png",
+            "nogoavoid": "pics_cards/4.png"
         }
         var condition_to_response = {
             "gowin": "go",
@@ -244,8 +252,8 @@
             timeline.push({
                 type: "fullscreen",
                 fullscreen_mode: false,
-                message: "Takk for deltakelse!<p>Trykk på 'avslutt eksperiment' for å gå tilbake til normal vindumodus.",
-                button_label: "Avslutt eksperiment"
+                message: "Thank you for participating!<p>Press 'exit' to exit the full-screen mode.",
+                button_label: "exit"
             });
         }
 
