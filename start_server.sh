@@ -1,2 +1,2 @@
 #python -m SimpleHTTPServer 1337
-python -m http.server
+python3 -m http.server

@@ -13,7 +13,7 @@
     <script src="jsPsych/plugins/jspsych-survey-text.js" charset="utf-8"></script>
     <link href="jsPsych/css/jspsych.css" rel="stylesheet" type="text/css">
     </link>
-    <!--<link href="stroop.css" rel="stylesheet" type="text/css">-->
+    <link href="study.css" rel="stylesheet" type="text/css">
     </link>
 </head>
 
@@ -24,7 +24,8 @@
         var timeline = [];
 
         /* ========= PARAMETERS ==================== */
-        var ntrials = 40; // testing
+        var ntraining=5; // number of training trials
+        var ntrials = 40; // number of full trials
         var gocost=0; // go-cost (added to reward in case of go)
         var pwin_if_correct=0.8; // win-contingency
         var rew_magnitude=10; // reward magnitude (multiplied by -1 for losses)
@@ -189,8 +190,6 @@
                     }
                 }
                 data.reward=reward;
-                //data.pressed_key = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
-                //data.correct = data.key_press == jsPsych.pluginAPI.convertKeyCharacterToKeyCode(data.correct_response);      
                 saveData(expid+"_"+subject, jsPsych.data.get().csv());
             }
         }
@@ -217,6 +216,9 @@
         }
         /* ========= /TRIAL DEFINITION ==================== */
 
+        /* ========= TRAINING  DEFINITION ==================== */
+
+        /* ========= /TRAINING DEFINITION ==================== */
 
         /* ========= EXPERIMENT DEFINITION ==================== */
         var factors = {
@@ -224,7 +226,7 @@
         }
         var design = jsPsych.randomization.factorial(factors, ntrials);
         for (var i = 0; i < design.length; ++i) {
-            var stim = "<div style='font-size:60px;'>" + design[i].condition;
+            var stim = "<div style='font-size:60px;'>";
             stim+="<img src='"+ condition_to_ticket[design[i].condition]+"'>";
             stim+="</div>";
             design[i].stimulus = stim;
