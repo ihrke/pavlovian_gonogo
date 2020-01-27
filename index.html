@@ -6,11 +6,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="jsPsych/jspsych.js" charset="utf-8"></script>
     <script src="plugins/jspsych-instructions.js" charset="utf-8"></script>
+    <script src="plugins/jspsych-quiz-multi-choice.js" charset="utf-8"></script>
     <script src="jsPsych/plugins/jspsych-fullscreen.js" charset="utf-8"></script>
     <script src="jsPsych/plugins/jspsych-html-keyboard-response.js" charset="utf-8"></script>
     <script src="jsPsych/plugins/jspsych-image-keyboard-response.js" charset="utf-8"></script>
     <script src="jsPsych/plugins/jspsych-survey-multi-select.js" charset="utf-8"></script>
     <script src="jsPsych/plugins/jspsych-survey-text.js" charset="utf-8"></script>
+    <script src="jsPsych/plugins/jspsych-survey-multi-choice.js" charset="utf-8"></script>
+    <script src="jsPsych/plugins/jspsych-survey-likert.js" charset="utf-8"></script>
     <link href="jsPsych/css/jspsych.css" rel="stylesheet" type="text/css">
     </link>
     <link href="study.css" rel="stylesheet" type="text/css">
@@ -19,7 +22,7 @@
 
 <body>
     <script>
-        var debug = false;
+        var debug = true;
         /* create timeline */
         var timeline = [];
 
@@ -257,6 +260,120 @@
         }
         timeline.push(train_block);
         /* ========= /TRAINING DEFINITION ==================== */
+
+        /* ========= QUIZ DEFINITION ==================== */
+
+
+        var quiz1_options = ["A", "B", "C", "D", "E", "F"];
+
+        var quiz1_multi_choice = {
+            type: 'quiz-multi-choice',
+            preamble: "<b>Please check the letter under each statement that corresponds to correct screen</b>\
+                    <p><img src='pics/quiz1.png' width=500px></p>",
+            question: {
+                    prompt: jsPsych.timelineVariable('prompt'), 
+                    name: jsPsych.timelineVariable('name'), 
+                    options: quiz1_options, 
+                    correct: jsPsych.timelineVariable('correct'), 
+                    hint: jsPsych.timelineVariable('hint'), 
+                    horizontal: true,
+                    required:true
+            },
+        };
+
+        var quiz1_design=[
+            {name:"quiz1.1", prompt:"„Not winning” or „Not losing” after picking up a card",
+             correct:"D", hint:"Wrong answer. When you pick up a card, you lose one point (-1) and 'not winning' indicates zero points. <br>\
+             Please try again..."},
+            {"name":"quiz1.2", "prompt":"Losing without picking up a card", 
+            correct:"E", hint:"Wrong answer. When you lose, you lose ten points (-10). Not picking up a card has no cost. <br>\
+             Please try again..."},
+            {name:"quiz1.3", prompt:"Winning without picking up a card",
+            correct:"A", hint:"Wrong answer. When you win, you get ten points (10). Not picking up a card has no cost.<br>\
+             Please try again..."},
+             {name:"quiz1.4", prompt:"Winning when picking up a card",
+            correct:"B", hint:"Wrong answer. When you win, you get ten points (10). Picking up a card has a cost of one point (-1).<br>\
+             Please try again..."},
+             {name:"quiz1.5", prompt:"„Not winning” or „Not losing” without picking up a card.",
+            correct:"C", hint:"Wrong answer. When you don't win or lose, you don't get or lose any points (0). Not picking up a card has no cost.<br>\
+             Please try again..."},
+             {name:"quiz1.6", prompt:"Losing after picking up a card.",
+            correct:"F", hint:"Wrong answer. When you lose, you lose ten points (-10). Picking up a card has a cost of one point (-1).<br>\
+             Please try again..."}, 
+        ]
+        var quiz1_block = {
+            timeline: [quiz1_multi_choice],
+            timeline_variables: quiz1_design
+        }
+        timeline.push(quiz1_block);
+
+        var quiz2_options = ["True", "False"];
+
+        var quiz2_multi_choice = {
+            type: 'quiz-multi-choice',
+            preamble: "<b>Decide if the statement is true or false!</b></p>",
+            question: {
+                    prompt: jsPsych.timelineVariable('prompt'), 
+                    name: jsPsych.timelineVariable('name'), 
+                    options: quiz2_options, 
+                    correct: jsPsych.timelineVariable('correct'), 
+                    hint: jsPsych.timelineVariable('hint'), 
+                    horizontal: true,
+                    required:true
+            },
+        };
+
+        var quiz2_design=[
+            {name:"quiz2.1", prompt:"If I answer correctly, I will always win.",
+             correct:"False", hint:"Wrong answer. Sometimes, you can not win or even lose even though you give the correct response.<br>\
+             However, it is more likely that you win or avoid losing when giving the correct response.<br>\
+             Please try again..."},
+            {"name":"quiz2.2", "prompt":"If I answer incorrectly, I will always lose.", 
+            correct:"False", hint:"Wrong answer. Sometimes, you can win or avoid losing even though you give the correct response.<br>\
+             However, it is less likely that you win or avoid losing when giving the incorrect response. <br>\
+             Please try again..."},
+            {name:"quiz2.3", prompt:"If I answer correctly, I have good chances to receive the best outcome.",
+            correct:"True", hint:"Wrong answer. Even though you are not guarantueed to always get the best outcome with the correct response,\
+                your chances for getting it are highest when giving the correct response. <br>\
+             Please try again..."},
+             {name:"quiz2.4", prompt:"If I answer incorrectly, I have good chances to receive the best outcome.",
+            correct:"False", hint:"Wrong answer. Even though you are not guarantueed to always get the best outcome with the correct response,\
+                your chances for getting it are low when giving the incorrect response. <br>\
+             Please try again..."},
+             {name:"quiz2.5", prompt:"For a winning card, an outcome of „-1“ is a bad outcome.",
+            correct:"True", hint:"Wrong answer. A winning card should give you 10 points when getting the good outcome.<br>\
+             Please try again..."},
+             {name:"quiz2.6", prompt:"For a losing card, an outcome of „0” is a bad outcome.",
+            correct:"False", hint:"Wrong answer. A losing card can cost you 10 points, so not losing them is a 'good' outcome.<br>\
+             Please try again..."},
+             {name:"quiz2.7", prompt:"Sometimes I can get „-10” after a winning card.",
+            correct:"False", hint:"Wrong answer. A winning card can never cost you any points. It can only win (10) or not win (0).<br>\
+             Please try again..."},
+             {name:"quiz2.8", prompt:"Sometimes I can get „0” after a losing card.",
+            correct:"True", hint:"Wrong answer. A losing card can only cost you points. It can either cause a loss (-10) or no loss (0).<br>\
+             Please try again..."},
+             {name:"quiz2.9", prompt:"Sometimes I can get „9” after a losing card.",
+            correct:"False", hint:"Wrong answer. A losing card can only cost you points. It can either cause a loss (-10) or no loss (0).<br>\
+             Please try again..."},
+             {name:"quiz2.10", prompt:"Sometimes I can get „-1” after a winning card.",
+            correct:"True", hint:"Wrong answer. A winning card can only win points but together with a bad outcome (not winning) and picking up the card (-1), this can result in a total loss of one point.<br>\
+             Please try again..."},
+             {name:"quiz2.11", prompt:"It is never worth picking up the cards from the table.",
+            correct:"False", hint:"Wrong answer. You can significantly increase your winnings when picking up winning cards and picking up avoid-losing cards.<br>\
+             Please try again..."},
+             {name:"quiz2.12", prompt:"It is always worth picking up the cards from the table.",
+            correct:"False", hint:"Wrong answer. You can significantly increase your winnings when leaving the right cards on the table.<br>\
+             Please try again..."}
+        ]
+        var quiz2_block = {
+            timeline: [quiz2_multi_choice],
+            timeline_variables: quiz2_design
+        }
+        timeline.push(quiz2_block);
+
+        
+        /* ========= /QUIZ DEFINITION ==================== */
+
 
         /* ========= EXPERIMENT DEFINITION ==================== */
         timeline.push({
