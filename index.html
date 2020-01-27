@@ -19,19 +19,20 @@
 
 <body>
     <script>
-        var debug = true;
+        var debug = false;
         /* create timeline */
         var timeline = [];
 
         /* ========= PARAMETERS ==================== */
         var ntraining=5; // number of training trials
         var ntrials = 40; // number of full trials
+        var nblocks = 2; // number of blocks (ntrials each)
         var gocost=0; // go-cost (added to reward in case of go)
         var pwin_if_correct=0.8; // win-contingency
         var rew_magnitude=10; // reward magnitude (multiplied by -1 for losses)
 
         var duration_fixation=1000;
-        var duration_ticket=1000;
+        var duration_card=1000;
         var duration_prompt=1000;
         var duration_feedback=1000;
         /* ========= /PARAMETERS ==================== */
@@ -80,33 +81,39 @@
                     There will therefore be some confusing trials but the outcomes are not completely random so you should be able to learn after a number of trials.<p>\
                     The task is rather difficult but it is important that you do not give up. Try to find the best strategy to collect as many points as possible! <p>\
                     Good luck! <p>\
+                    Press next to start the prectise session.</div>",
+                "<div class='instructions'><p> \
+                    <center>\
+                    <img src='./pics/cards/set0/1.png' width='15%'>\
+                    <img src='./pics/cards/set0/2.png' width='15%'>\
+                    <img src='./pics/cards/set0/3.png' width='15%'>\
+                    <img src='./pics/cards/set0/4.png' width='15%'>\
+                    </center> <p>\
                     Press next to start the prectise session.</div>"
+            ],
+            show_clickable_nav: true,
+            button_label_previous: "back",
+            button_label_next: "next"
+        };
 
-            ],
-            show_clickable_nav: true,
-            button_label_previous: "back",
-            button_label_next: "next"
-        };
-        var instructions2 = {
-            type: "instructions",
-            pages: [
-                "<div class='instructions'><H1>Good luck!</H1><p>\
-                    Now the actual experiment will start. <p>\
-                    Press next to start the experiment.</div>"
-            ],
-            show_clickable_nav: true,
-            button_label_previous: "back",
-            button_label_next: "next"
-        };
+        
         timeline.push(instructions1);
 
         var conditions = ["gowin", "nogowin", "goavoid", "nogoavoid"];
-        var ticket_imgs= ["pics_cards/1.png", "pics_cards/2.png", "pics_cards/3.png", "pics_cards/4.png"];
-        var condition_to_ticket = {
-            "gowin": "pics_cards/1.png",
-            "nogowin": "pics_cards/2.png",
-            "goavoid": "pics_cards/3.png",
-            "nogoavoid": "pics_cards/4.png"
+        var cardimg_path="pics/cards/";
+        var card_imgs=["1.png", "2.png", "3.png", "4.png"];
+
+        // randomizing condition to card for each block
+        // "set0" is the training set
+        var condition_to_card=[];
+        for (var i = 0; i <= nblocks; i++) { 
+            var imgs=jsPsych.randomization.shuffle(card_imgs);
+            condition_to_card.push({
+                "gowin"    :`${cardimg_path}/set${i}/${imgs[0]}`,
+                "nogowin"  :`${cardimg_path}/set${i}/${imgs[1]}`,
+                "goavoid"  :`${cardimg_path}/set${i}/${imgs[2]}`,
+                "nogoavoid":`${cardimg_path}/set${i}/${imgs[3]}`
+            });
         }
         var condition_to_response = {
             "gowin": "go",
@@ -120,7 +127,9 @@
             "goavoid":"avoid",
             "nogoavoid":"avoid"
         };
-
+        var factors = {
+            condition: conditions
+        }
         var go_button = 'space';
 
         /* ========= TRIAL DEFINITION ==================== */
@@ -135,14 +144,14 @@
                 data.trial_part="fixation";
             }
         }
-        var ticket = {
+        var card = {
             type: "html-keyboard-response",
             stimulus: jsPsych.timelineVariable('stimulus'),
             choices: jsPsych.NO_KEYS,
-            trial_duration: duration_ticket,
+            trial_duration: duration_card,
             data: jsPsych.timelineVariable('data'),
             on_finish: function (data) {
-                data.trial_part="ticket";
+                data.trial_part="card";
             }
         }
         var prompt = {
@@ -217,17 +226,19 @@
         /* ========= /TRIAL DEFINITION ==================== */
 
         /* ========= TRAINING  DEFINITION ==================== */
+        timeline.push({
+            type: "instructions",
+            pages: ["TRAINING instructions here<p>"],
+            show_clickable_nav: true,
+            allow_backward: false,
+            button_label_previous: "back",
+            button_label_next: "next"
+        });
 
-        /* ========= /TRAINING DEFINITION ==================== */
-
-        /* ========= EXPERIMENT DEFINITION ==================== */
-        var factors = {
-            condition: conditions
-        }
-        var design = jsPsych.randomization.factorial(factors, ntrials);
+        var design = jsPsych.randomization.factorial(factors, ntraining);
         for (var i = 0; i < design.length; ++i) {
             var stim = "<div style='font-size:60px;'>";
-            stim+="<img src='"+ condition_to_ticket[design[i].condition]+"'>";
+            stim+="<img src='"+ condition_to_card[0][design[i].condition]+"'>";
             stim+="</div>";
             design[i].stimulus = stim;
             design[i].trial=i;
@@ -236,15 +247,70 @@
                 condition:design[i].condition,
                 gonogo: condition_to_response[design[i].condition],
                 winavoid: condition_to_winavoid[design[i].condition],
-                training: 0
+                training: 1
             }
         }
 
-        var exp_block = {
-            timeline: [fixation, ticket, prompt, fixation, feedback],
+        var train_block = {
+            timeline: [fixation, card, prompt, fixation, feedback],
             timeline_variables: design
         }
-        timeline.push(exp_block);
+        timeline.push(train_block);
+        /* ========= /TRAINING DEFINITION ==================== */
+
+        /* ========= EXPERIMENT DEFINITION ==================== */
+        timeline.push({
+            type: "instructions",
+            pages: [
+                "<div class='instructions'><H1>Good luck!</H1><p>\
+                    Now the actual experiment will start. <p>\
+                    Press next to start the experiment.</div>"
+            ],
+            show_clickable_nav: true,
+            button_label_previous: "back",
+            button_label_next: "next"
+        });
+
+        var instru_before_block={
+            type: "instructions",
+            pages: [
+                "<div class='instructions'><H1>Break!</H1><p>\
+                    Break instructions go here. <p>\
+                    Press next to start the next block of the experiment.</div>"
+            ],
+            show_clickable_nav: true,
+            button_label_previous: "back",
+            button_label_next: "next"
+        };
+
+        // block loop
+        for(var blockix=1; blockix<=nblocks; blockix++){
+            var design = jsPsych.randomization.factorial(factors, ntrials);
+
+            // trial loop
+            for (var i = 0; i < design.length; ++i) {
+                var stim = "<div style='font-size:60px;'>";
+                stim+="<img src='"+ condition_to_card[blockix][design[i].condition]+"'>";
+                stim+="</div>";
+                design[i].stimulus = stim;
+                design[i].trial=i;
+                design[i].data = {
+                    trial:i+1,
+                    block:blockix,
+                    condition:design[i].condition,
+                    gonogo: condition_to_response[design[i].condition],
+                    winavoid: condition_to_winavoid[design[i].condition],
+                    training: 0
+                }
+            }
+
+            var exp_block = {
+                timeline: [fixation, card, prompt, fixation, feedback],
+                timeline_variables: design
+            }
+            timeline.push(instru_before_block);
+            timeline.push(exp_block);
+        }
         /* ========= /EXPERIMENT DEFINITION ==================== */
 
 
@@ -263,7 +329,7 @@
         jsPsych.init({
             timeline: timeline,
             on_finish: function () {
-                jsPsych.data.displayData();
+                jsPsych.data.displayData("csv");
             },
             on_interaction_data_update: function (data) {
                 console.log(JSON.stringify(data))
