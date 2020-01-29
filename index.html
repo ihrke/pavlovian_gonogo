@@ -29,8 +29,8 @@
         /* ========= PARAMETERS ==================== */
         var ntraining=5; // number of training trials
         var ntrials = 40; // number of full trials
-        var nblocks = 2; // number of blocks (ntrials each)
-        var gocost=0; // go-cost (added to reward in case of go)
+        var nblocks = 1; // number of blocks (ntrials each)
+        var gocost=-1; // go-cost (added to reward in case of go)
         var pwin_if_correct=0.8; // win-contingency
         var rew_magnitude=10; // reward magnitude (multiplied by -1 for losses)
 
@@ -63,7 +63,7 @@
                 type: "fullscreen",
                 fullscreen_mode: true,
                 message: "Welcome! <p>We will now use your entire screen so that you are not distracted by other things.<p>",
-                button_label: "Fortsett"
+                button_label: "Continue"
             });
         }
         var instructions1 = {
@@ -74,25 +74,37 @@
                     While conducting the experiment, you are not allowed to switch windows or do other things on your PC. If you switch windows during the experiment, the experiment will end automatically and you will be prompted to restart.<p>\
                     Press next to continue.</div>",
                 "<div class='instructions'><p> \
-                    You will play a card game consisting of 160 trials. <p>\
-                    On each trial, you will be presented with one of four cards. You can choose to pick it up by pressing space or not do anything while you see the question mark. (Your response will only get registered during the question mark.) <p>\
-                    The combination of a specific card and your action/inaction will earn you points at the end of each trial. <p>\
-                    Two of the cards are 'winning cards' which means, the optimal outcome is winning 10 points and the alternative is not getting anything. The remaining two cards are 'losing cards' for which the optimal outcome is not losing anything (0 points) and the alternative is losing 10 points. <p>\
-                    You should learn which response is correct for each card to maximize your earnings in following trials. <p>\
-                    The task is made more difficult by probabilistic outcomes.<p>\
-                    That means that responding correctly will not guarantee you the optimal outcome. Rather, it will increase the probability of you receiving it. Respectively, the wrong response will decrease the probability of the optimal outcome. <p>\
-                    There will therefore be some confusing trials but the outcomes are not completely random so you should be able to learn after a number of trials.<p>\
-                    The task is rather difficult but it is important that you do not give up. Try to find the best strategy to collect as many points as possible! <p>\
-                    Good luck! <p>\
-                    Press next to start the prectise session.</div>",
-                "<div class='instructions'><p> \
+                    You will play a block of a card game consisting of 160 trials. <p>\
+                    Each trial starts with a fixation cross in the middle of the screen followed by one of four cards such as these: <p>\
                     <center>\
                     <img src='./pics/cards/set0/1.png' width='15%'>\
                     <img src='./pics/cards/set0/2.png' width='15%'>\
                     <img src='./pics/cards/set0/3.png' width='15%'>\
                     <img src='./pics/cards/set0/4.png' width='15%'>\
                     </center> <p>\
-                    Press next to start the prectise session.</div>"
+                    After the card, a question mark appears. This is when you can choose to pick up the card by pressing space or not do anything. <p>\
+                    Beware that your response will only get registered while the question mark is on the screen. <p>\
+                    Press next to continue.</div>",
+                "<div class='instructions'><p> \
+                    The combination of a specific card and your action/inaction will earn you points at the end of each trial. <p>\
+                    Two of the cards are 'winning cards' which means, the optimal outcome is winning 10 points and the alternative is not getting anything. The remaining two cards are 'losing cards' for which the optimal outcome is not losing anything (0 points) and the alternative is losing 10 points. <p>\
+                    In the beginning, however, you do not know which response is correct for each card. You have to learn from trying out different responses to each card to maximize your earnings in the following trials. <p>\
+                    Whether a card is a winning or losing card and the right response does not change throughout the block. <p>\
+                    Press next to continue.</div>",
+                "<div class='instructions'><p> \
+                    Picking up a card will cost you 1 point ('go cost') to simulate the cost of a real-life action in comparison to inaction. <p>\
+                    Do not worry about the go cost too much while playing, though. If picking up a card is the right response, it will be worth it. <p>\
+                    Press next to continue.</div>",
+                "<div class='instructions'><p> \
+                    The game is made more difficult by probabilistic outcomes.<p>\
+                    That means that responding correctly will not guarantee you the optimal outcome. Rather, it will increase the probability of you receiving it. Respectively, the wrong response will decrease the probability of the optimal outcome. <p>\
+                    Therefore, there will be trials with confusing outcomes. However, the outcomes are not completely random and you should be able to learn the right action for each card over a few more trials.<p>\
+                    Press next to continue.</div>",
+                "<div class='instructions'><p> \
+                    The task is rather difficult but you must not give up. <p>\
+                    Try to find the best strategy to collect as many points as possible! <p>\
+                    Press next to continue.</div>",
+
             ],
             show_clickable_nav: true,
             button_label_previous: "back",
@@ -231,11 +243,14 @@
         /* ========= TRAINING  DEFINITION ==================== */
         timeline.push({
             type: "instructions",
-            pages: ["TRAINING instructions here<p>"],
+            pages: ["Now, there will be a short training block to show you what the game looks like. <p>\
+                    We would like you to try to play the game as if it was a real block already. <p>\
+                    Do not worry if you are not able to learn the right response to all the cards during the training. The number of trials might be too low for that. <p>\
+                    Good luck! <p>"],
             show_clickable_nav: true,
             allow_backward: false,
             button_label_previous: "back",
-            button_label_next: "next"
+            button_label_next: "continue"
         });
 
         var design = jsPsych.randomization.factorial(factors, ntraining);
@@ -259,6 +274,20 @@
             timeline_variables: design
         }
         timeline.push(train_block);
+
+        var instructions2= {
+            type: "instructions",
+            pages: [
+                "<div class='instructions'><p> \
+                    To make sure you understood the game, please fill in the following quiz. If you answer incorrectly, a hint will pop up and you can answer again. <p> \
+                    You will only be allowed to proceed after picking the right answer. <p> \
+                    Press next to start the the quiz.</div>"
+            ],
+            show_clickable_nav: true,
+            button_label_previous: "back",
+            button_label_next: "next"
+        };
+        timeline.push(instructions2);
         /* ========= /TRAINING DEFINITION ==================== */
 
         /* ========= QUIZ DEFINITION ==================== */
@@ -392,7 +421,8 @@
             type: "instructions",
             pages: [
                 "<div class='instructions'><H1>Break!</H1><p>\
-                    Break instructions go here. <p>\
+                    You can now take a short break. <p>\
+                    The next block of the game will have the same rules as the previous one but the cards will be new.  <p>\
                     Press next to start the next block of the experiment.</div>"
             ],
             show_clickable_nav: true,
